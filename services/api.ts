@@ -1,8 +1,7 @@
 // src/services/api.ts
 
 // --- FIX: IMPORT the types from your central types file ---
-import { Booking, BookingStatus, Service, User } from '../types'; // <-- Review type removed
-
+import { Booking, BookingStatus, Service, User } from '../types';
 // --- Configuration ---
 const API_URL = 'http://localhost:5000/api';
 
@@ -138,5 +137,26 @@ export const deleteGalleryItem = async (id: string): Promise<{ success: boolean 
   await request(`gallery/manage/${id}`, 'DELETE');
   return { success: true };
 };
-// --- REMOVE ALL Review API Calls ---
-// (delete getReviews, createReview, updateReview, deleteReview functions)
+// src/services/api.ts
+// ... (add this with your other interfaces and functions)
+
+export interface BlogPost {
+  _id: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  createdAt: string;
+}
+
+export const getBlogPosts = async (): Promise<BlogPost[]> => {
+  return request<BlogPost[]>('blog');
+};
+
+export const createBlogPost = async (formData: FormData): Promise<BlogPost> => {
+  return request<BlogPost>('blog', 'POST', formData, true);
+};
+
+export const deleteBlogPost = async (id: string): Promise<{ success: boolean }> => {
+  await request(`blog/${id}`, 'DELETE');
+  return { success: true };
+};

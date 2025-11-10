@@ -30,12 +30,13 @@ exports.createBooking = async (req, res) => {
     });
 
     const booking = await newBooking.save();
+    const phoneLink = `https://wa.me/${phone.replace(/\D/g, '')}`;
 
     // --- Send WhatsApp Notification to Admin ---
     const messageBody = `
       New Booking Received!
       Name: ${booking.name}
-      Phone: ${booking.phone}
+      Phone: ${booking.phone} (click to chat: ${phoneLink})
       Address: ${booking.address}
       Service: ${booking.serviceType}
       Preferred Date & Time: ${new Date(booking.preferredDateTime).toLocaleString()}

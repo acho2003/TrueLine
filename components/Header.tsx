@@ -1,4 +1,5 @@
 
+import path from 'path';
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
@@ -45,6 +46,7 @@ const Header: React.FC = () => {
         { path: "/gallery", name: "Gallery" },
         { path: "/about", name: "About" },
         { path: "/contact", name: "Contact" },
+        { path: "/blog", name: "Blog" },
     ];
 
     return (

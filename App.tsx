@@ -13,8 +13,10 @@ import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import PrivateRoute from './components/PrivateRoute'; // Ensure this is imported
 import MainLayout from './components/MainLayout';
-import GalleryManager from './pages/admin/GalleryManager';
 import GalleryPage from './pages/GalleryPage';
+import BlogPage from './pages/BlogPage';
+import BlogManager from './pages/admin/BlogManager';
+import BlogDetailPage from './pages/BlogDetailPage';
 
 const App: React.FC = () => {
   return (
@@ -28,7 +30,9 @@ const App: React.FC = () => {
             <Route path="/booking" element={<BookingPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/blog" element={<BlogPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/blog/:id" element={<BlogDetailPage />} />
           </Route>
 
           {/* Admin Routes (No Main Layout for Login/Dashboard) */}

@@ -28,7 +28,10 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', authRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/gallery', galleryRoutes);
+const blogRoutes = require('./routes/blogRoutes');
 
+// ... (in the app.use section)
+app.use('/api/blog', blogRoutes);
 // Serve uploaded files statically
 app.use('/uploads', express.static('uploads'));
 

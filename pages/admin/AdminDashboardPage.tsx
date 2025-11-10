@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import BookingManager from './BookingManager'; // Import the new component
-import ServiceManager from './ServiceManager'; // Import the new component
-// import ReviewManager from './GalleryPage';   // Import the new component
-import GalleryPage from './GalleryManager';
+import BookingManager from './BookingManager';
+import ServiceManager from './ServiceManager';
 import GalleryManager from './GalleryManager';
+import BlogManager from './BlogManager'; // <-- 1. IMPORT the new BlogManager component
 
 // Define the type for our tabs to ensure type safety
-type AdminTab = 'Bookings' | 'Services' | 'Gallery';
+// V V V 2. ADD 'Blog' to the list of possible tab types V V V
+type AdminTab = 'Bookings' | 'Services' | 'Gallery' | 'Blog';
 
 const AdminDashboardPage: React.FC = () => {
     const { logout, user } = useAuth();
@@ -29,8 +29,9 @@ const AdminDashboardPage: React.FC = () => {
                 return <ServiceManager />;
             case 'Gallery':
                 return <GalleryManager />;
+            case 'Blog': // <-- 3. ADD a case for the 'Blog' tab
+                return <BlogManager />;
             default:
-                // This fallback prevents rendering an empty space if a tab is misconfigured
                 return <div>Select a tab to get started.</div>;
         }
     };
@@ -54,7 +55,8 @@ const AdminDashboardPage: React.FC = () => {
                 {/* Tab Navigation */}
                 <div className="mb-8 border-b border-gray-200">
                     <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                        {(['Bookings', 'Services', 'Gallery'] as AdminTab[]).map(tab => (
+                        {/* V V V 4. ADD 'Blog' to the array of tabs to be rendered V V V */}
+                        {(['Bookings', 'Services', 'Gallery', 'Blog'] as AdminTab[]).map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
