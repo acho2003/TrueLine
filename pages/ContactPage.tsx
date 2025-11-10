@@ -33,7 +33,7 @@ const ContactPage: React.FC = () => {
               </div>
               <div className="flex items-center gap-4">
                 <MailIcon className="w-6 h-6 text-primary"/>
-                <a href="mailto:contact@evergreen.com" className="text-dark-text hover:text-primary">contact@evergreen.com</a>
+                <a href="mailto:contact@TrueLine.com" className="text-dark-text hover:text-primary">contact@TrueLine.com</a>
               </div>
             </div>
             <div className="mt-8">

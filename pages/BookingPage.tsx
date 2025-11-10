@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// --- CORRECTED IMPORTS ---
-import { createBooking, getServices } from '../services/api'; // Import FUNCTIONS from api
-import { Service } from '../types';                           // Import TYPES from types
+import { createBooking, getServices } from '../services/api';
+import { Service } from '../types';
+
+const ADMIN_WHATSAPP_NUMBER = '97517781187'; // Replace with your admin WhatsApp number in international format without + or spaces
 
 const BookingPage: React.FC = () => {
-  // ... rest of the component code is correct ...
   const location = useLocation();
   const navigate = useNavigate();
   const { selectedService } = location.state || {};
@@ -26,8 +26,8 @@ const BookingPage: React.FC = () => {
       try {
         const data = await getServices();
         setServices(data);
-      } catch (error) {
-        console.error("Could not load services for dropdown", error);
+      } catch (err) {
+        console.error("Could not load services for dropdown", err);
       }
     };
     fetchServicesForDropdown();
@@ -39,25 +39,49 @@ const BookingPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(''); setSuccess('');
+    setError('');
+    setSuccess('');
+
     if (!formData.name || !formData.phone || !formData.address || !formData.serviceType || !formData.preferredDateTime) {
       setError('Please fill in all required fields.');
       return;
     }
+
     setLoading(true);
+
     try {
+      // 1️⃣ Save booking in backend
       await createBooking(formData);
-      setSuccess('Your booking request has been sent! We will contact you shortly to confirm.');
+      setSuccess('Your booking request has been sent! We will contact you shortly.');
+
+      // 2️⃣ Construct WhatsApp message
+      const message = `
+New Booking!
+Name: ${formData.name}
+Phone: ${formData.phone}
+Address: ${formData.address}
+Service: ${formData.serviceType}
+Preferred Date & Time: ${new Date(formData.preferredDateTime).toLocaleString()}
+Notes: ${formData.notes || 'N/A'}
+      `;
+
+      const whatsappURL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+      // 3️⃣ Open WhatsApp Web / App
+      window.open(whatsappURL, '_blank');
+
+      // 4️⃣ Reset form
       setFormData({ name: '', phone: '', address: '', serviceType: '', preferredDateTime: '', notes: '' });
       setTimeout(() => navigate('/'), 3000);
+
     } catch (err) {
+      console.error(err);
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // JSX remains the same
   return (
     <div className="py-20 bg-light-bg">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,9 +90,9 @@ const BookingPage: React.FC = () => {
             <h1 className="text-4xl font-bold text-primary">Book a Service</h1>
             <p className="text-light-text mt-2">Fill out the form below and we'll get back to you soon.</p>
           </div>
-          
-          {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 animate-fadeIn" role="alert">{error}</div>}
-          {success && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 animate-fadeIn" role="alert">{success}</div>}
+
+          {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">{error}</div>}
+          {success && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">{success}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -111,4 +135,5 @@ const BookingPage: React.FC = () => {
     </div>
   );
 };
+
 export default BookingPage;
