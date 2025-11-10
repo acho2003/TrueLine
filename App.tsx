@@ -1,0 +1,52 @@
+// src/App.tsx
+
+import React from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext'; // Ensure this is imported
+import HomePage from './pages/HomePage';
+import ServicesPage from './pages/ServicesPage';
+import BookingPage from './pages/BookingPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+// import ReviewsPage from './pages/ReviewsPage';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import PrivateRoute from './components/PrivateRoute'; // Ensure this is imported
+import MainLayout from './components/MainLayout';
+import GalleryManager from './pages/admin/GalleryManager';
+import GalleryPage from './pages/GalleryPage';
+
+const App: React.FC = () => {
+  return (
+    <AuthProvider> {/* AuthProvider should wrap your entire routing */}
+      <HashRouter>
+        <Routes>
+          {/* Public Routes with Main Layout */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/booking" element={<BookingPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+          </Route>
+
+          {/* Admin Routes (No Main Layout for Login/Dashboard) */}
+          <Route path="/admin" element={<AdminLoginPage />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <PrivateRoute> {/* Use PrivateRoute to protect the dashboard */}
+                <AdminDashboardPage />
+              </PrivateRoute>
+            } 
+          />
+          {/* Optional: Add a catch-all for 404 */}
+          <Route path="*" element={<div>404 - Not Found</div>} />
+        </Routes>
+      </HashRouter>
+    </AuthProvider>
+  );
+};
+
+export default App;
