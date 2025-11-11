@@ -8,6 +8,9 @@ import ServicesPage from './pages/ServicesPage';
 import BookingPage from './pages/BookingPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import ScrollToTop from './components/ScrollToTop';
+import GoToTop from './components/GoToTop';
+import FloatingSocials from './components/FloatingSocials';
 // import ReviewsPage from './pages/ReviewsPage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
@@ -22,6 +25,7 @@ const App: React.FC = () => {
   return (
     <AuthProvider> {/* AuthProvider should wrap your entire routing */}
       <HashRouter>
+          <ScrollToTop />
         <Routes>
           {/* Public Routes with Main Layout */}
           <Route element={<MainLayout />}>

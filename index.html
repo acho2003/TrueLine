@@ -10,6 +10,21 @@
       tailwind.config = {
         theme: {
           extend: {
+            extend: {
+        // ... your other extensions (colors, fontFamily) ...
+        // --- ADD THIS ANIMATION CONFIG ---
+        animation: {
+         float: 'float 2s ease-in-out infinite alternate-reverse',
+        },
+        keyframes: {
+          float: {
+            '0%': { transform: 'translateY(-0.25rem)' },
+            '100%': { transform: 'translateY(0.25rem)' },
+          }
+        },
+      
+      },
+      
             colors: {
               'primary': '#313647',
               'primary-dark': '#2a2e3c',
@@ -94,6 +109,14 @@
       transform: scale(1.1);
     }
   }
+  @keyframes float {
+    0% {
+      transform: translateY(-0.25rem);
+    }
+    100% {
+      transform: translateY(0.25rem);
+    }
+  }
 
    @keyframes pulse-glow {
     0%, 100% {
@@ -110,6 +133,7 @@
 <link rel="stylesheet" href="/index.css">
 </head>
   <body>
+     <div class="animate-float"></div>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
