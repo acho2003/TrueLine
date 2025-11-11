@@ -92,16 +92,7 @@ const FeaturedServicesSection: React.FC<Props> = ({ services }) => {
             </div>
           )}
         </div>
-        
-        <div className="text-center mt-12">
-            <Link 
-                to="/services" 
-                className="inline-block relative overflow-hidden group font-bold py-3 px-8 rounded-none border-2 border-primary text-primary transition-all duration-300"
-            >
-                <span className="absolute top-0 left-0 w-0 h-full bg-[#6FAF4B] transition-all duration-300 ease-in-out group-hover:w-full z-0"></span>
-                <span className="relative z-10 group-hover:text-white transition-colors duration-300">View All Services</span>
-            </Link>
-        </div>
+ 
       </div>
     </section>
   );
