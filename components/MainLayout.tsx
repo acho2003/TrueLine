@@ -2,6 +2,8 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import GoToTop from './GoToTop';
+import FloatingSocials from './FloatingSocials';
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
@@ -14,6 +16,8 @@ const MainLayout: React.FC = () => {
         </div>
       </main>
       <Footer />
+      <FloatingSocials />
+      <GoToTop />
     </div>
   );
 };
