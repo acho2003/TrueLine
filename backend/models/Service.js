@@ -1,3 +1,6 @@
+// const Service = require('../models/Service');
+// ... (omitted)
+
 const mongoose = require('mongoose');
 
 const ServiceSchema = new mongoose.Schema({
@@ -9,14 +12,16 @@ const ServiceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  price: {
-    type: String, // Keep as string for flexibility (e.g., "Custom Quote", "$50/hr")
-    required: true,
-  },
   imageUrl: {
     type: String,
     required: true,
   },
+  // --- NEW FIELD ---
+  details: {
+    type: [String], // Array of strings for the list of things they do
+    default: [],
+  },
+  // -----------------
 });
 
 module.exports = mongoose.model('Service', ServiceSchema);

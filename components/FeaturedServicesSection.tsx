@@ -1,10 +1,7 @@
 // src/components/FeaturedServicesSection.tsx
-import React, { useState, useEffect } from 'react';
-/// src/components/FeaturedServicesSection.tsx
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { Service } from '../types';
-
-const API_BASE_URL = 'http://localhost:5000';
 
 interface Props {
   services: Service[];
@@ -18,11 +15,13 @@ const ServiceHoverCard: React.FC<{ service: Service; index: number }> = ({ servi
       data-aos-duration="1000"
       data-aos-delay={index * 100}
     >
-      <div 
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-in-out group-hover:scale-110"
-        // --- MODIFIED: Added '/backend' to the image URL path ---
-        style={{ backgroundImage: `url(${API_BASE_URL}/backend/upload/${service.imageUrl})` }}
+      {/* --- UPDATED: use an <img> tag and normalize backslashes in the path --- */}
+      <img
+        src={`backend/${service.imageUrl.replace(/\\/g, '/')}`}
+        alt={service.name}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
       />
+
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
 
       <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out bg-black/30 backdrop-blur-sm">
@@ -44,7 +43,6 @@ const ServiceHoverCard: React.FC<{ service: Service; index: number }> = ({ servi
   );
 };
 
-// The rest of the component remains exactly the same
 const FeaturedServicesSection: React.FC<Props> = ({ services }) => {
   return (
     <section className="bg-gray-50 py-20 lg:py-28">
@@ -64,15 +62,19 @@ const FeaturedServicesSection: React.FC<Props> = ({ services }) => {
             </h2>
           </div>
           <div className="text-center md:text-right max-w-lg">
-            {/* Paragraph removed in your last version */}
+            {/* Optional paragraph can go here */}
           </div>
-          <Link 
-            to="/services" 
-            className="hidden lg:inline-block relative overflow-hidden group font-bold py-3 px-8 rounded-none border-2 border-primary text-primary transition-all duration-300 transform hover:scale-105 flex-shrink-0"
-          >
-            <span className="absolute top-0 left-0 w-0 h-full bg-[#6FAF4B] transition-all duration-300 ease-in-out group-hover:w-full z-0"></span>
-            <span className="relative z-10 group-hover:text-white transition-colors duration-300">View All Services</span>
-          </Link>
+<div className="text-right mt-12 hidden lg:block">
+
+  <Link 
+      to="/services" 
+      className="inline-block relative overflow-hidden group font-bold py-3 px-8 rounded-none border-2 border-primary text-primary transition-all duration-300"
+  >
+      <span className="absolute top-0 left-0 w-0 h-full bg-[#6FAF4B] transition-all duration-300 ease-in-out group-hover:w-full z-0"></span>
+      <span className="relative z-10 group-hover:text-white transition-colors duration-300">View All Services</span>
+  </Link>
+</div>
+
         </div>
         
         {/* Grid layout for services */}
@@ -91,7 +93,7 @@ const FeaturedServicesSection: React.FC<Props> = ({ services }) => {
           )}
         </div>
         
-        <div className="text-center mt-12 lg:hidden">
+        <div className="text-center mt-12">
             <Link 
                 to="/services" 
                 className="inline-block relative overflow-hidden group font-bold py-3 px-8 rounded-none border-2 border-primary text-primary transition-all duration-300"

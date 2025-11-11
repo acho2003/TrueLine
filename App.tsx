@@ -17,6 +17,7 @@ import GalleryPage from './pages/GalleryPage';
 import BlogPage from './pages/BlogPage';
 import BlogManager from './pages/admin/BlogManager';
 import BlogDetailPage from './pages/BlogDetailPage';
+import ServiceDetails from './pages/ServiceDetails';
 
 const App: React.FC = () => {
   return (
@@ -33,6 +34,7 @@ const App: React.FC = () => {
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/blog/:id" element={<BlogDetailPage />} />
+            <Route path="/services/:id" element={<ServiceDetails />} />
           </Route>
 
           {/* Admin Routes (No Main Layout for Login/Dashboard) */}
