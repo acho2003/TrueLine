@@ -1,14 +1,9 @@
-
-import path from 'path';
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
-const LeafIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66C7.96 16.17 11 13 17 12V8z" />
-        <path d="M17 8a5.207 5.207 0 0 0-3-4.99V2h-2v1.01A5.207 5.207 0 0 0 9 8h8z" />
-    </svg>
-);
+import logoSrc from "../assets/logo.png";
+
+// --- ICONS & HOOKS (No changes here) ---
 
 const MenuIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -25,20 +20,25 @@ const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
-const Header: React.FC = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
+const useScrollPosition = () => {
+    const [scrollPosition, setScrollPosition] = useState(0);
 
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
+            setScrollPosition(window.pageYOffset);
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const navLinkClasses = "relative text-gray-600 hover:text-primary transition-colors duration-300 font-medium after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:w-full after:h-[2px] after:bg-primary after:scale-x-0 after:origin-center after:transition-transform after:duration-300 hover:after:scale-x-100";
-    const activeNavLinkClasses = "text-primary after:scale-x-100";
+    return scrollPosition;
+};
+
+// --- HEADER COMPONENT ---
+const Header: React.FC = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const scrollPosition = useScrollPosition();
+    const isScrolled = scrollPosition > 20;
 
     const navLinks = [
         { path: "/", name: "Home" },
@@ -49,16 +49,32 @@ const Header: React.FC = () => {
         { path: "/blog", name: "Blog" },
     ];
 
-    return (
-        <header className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white/80 backdrop-blur-sm shadow-sm'}`}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? 'h-16' : 'h-20'}`}>
-                    <Link to="/" className="flex items-center gap-2">
-                        <LeafIcon className="w-8 h-8 text-primary" />
-                        <span className="text-2xl font-bold text-primary">TrueLine</span>
-                    </Link>
+    const navLinkClasses = "relative text-[#313647] hover:text-[#6FAF4B] transition-colors duration-300 font-medium after:content-[''] after:absolute after:left-0 after:bottom-[-5px] after:w-full after:h-[2px] after:bg-[#6FAF4B] after:scale-x-0 after:origin-center after:transition-transform after:duration-300 hover:after:scale-x-100";
+    const activeNavLinkClasses = "text-[#6FAF4B] after:scale-x-100";
 
-                    <nav className="hidden md:flex items-center space-x-8">
+    return (
+        // --- MODIFIED: Added font-montserrat class here ---
+        <header className={`sticky top-0 z-50 transition-all duration-300 font-montserrat ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-white/80'}`}>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? 'h-20' : 'h-24'}`}>
+                    
+                    {/* --- MODIFIED: Logo size and text alignment improved --- */}
+                    <Link to="/" className="flex items-center gap-4" onClick={() => setIsMenuOpen(false)}>
+                        <img 
+                            src={logoSrc} 
+                            alt="TrueLine Pro Services Logo" 
+                            className="h-32 w-32" // Increased size from h-12 to h-14
+                        />
+                        <div className="flex flex-col">
+                            <span className="text-3xl font-bold text-[#313647] leading-none -ml-12">TrueLine</span>
+                            <span className="text-md font-normal text-[#4A5C6A] -mt-1 tracking-wide -ml-11">Pro Services</span>
+                        </div>
+                    </Link>
+                    {/* --- End of modification --- */}
+
+
+                    {/* Desktop Navigation */}
+                    <nav className="hidden lg:flex items-center space-x-8">
                         {navLinks.map(link => (
                              <NavLink
                                 key={link.path}
@@ -70,37 +86,51 @@ const Header: React.FC = () => {
                         ))}
                     </nav>
 
-                    <div className="flex items-center gap-4">
-                         <Link to="/booking" className="hidden sm:inline-block bg-secondary hover:bg-secondary-dark text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-md">
-                            Book Now
-                        </Link>
-                        <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
-                           {isMenuOpen ? <CloseIcon className="w-6 h-6 text-dark-text" /> : <MenuIcon className="w-6 h-6 text-dark-text" />}
-                        </button>
-                    </div>
+                    {/* Right side: Button and Mobile Menu Toggle */}
+                   <div className="flex items-center gap-4">
+    {/* --- NEW BUTTON STYLE --- */}
+    <Link 
+        to="/booking" 
+        className="hidden sm:inline-block relative overflow-hidden group font-bold py-3 px-7 rounded-none border-2 border-[#6FAF4B] transition-all duration-300 ease-in-out" // Changed rounded-lg to rounded-none
+    >
+        {/* The animated fill effect */}
+        <span className="absolute top-0 left-0 w-0 h-full bg-[#6FAF4B] transition-all duration-300 ease-in-out group-hover:w-full z-0"></span>
+        
+        {/* The text on top */}
+        <span className="relative z-10 text-[#6FAF4B] group-hover:text-white transition-colors duration-300">
+            Get A Quote
+        </span>
+    </Link>
+    <button 
+        className="lg:hidden p-2" 
+        onClick={() => setIsMenuOpen(!isMenuOpen)} 
+        aria-label="Toggle menu"
+    >
+        {isMenuOpen ? <CloseIcon className={`w-7 h-7 ${isScrolled ? 'text-[#313647]' : 'text-black'}`} /> : <MenuIcon className={`w-7 h-7 ${isScrolled ? 'text-[#313647]' : 'text-black'}`} />}
+    </button>
+</div>
                 </div>
             </div>
 
-            {/* Mobile Menu */}
-            {isMenuOpen && (
-                <div className="md:hidden bg-white border-t border-gray-200">
-                    <div className="px-4 py-4 flex flex-col items-center space-y-4">
-                        {navLinks.map(link => (
-                            <NavLink
-                                key={link.path}
-                                to={link.path}
-                                onClick={() => setIsMenuOpen(false)}
-                                className={({ isActive }) => `${navLinkClasses} text-lg ${isActive ? activeNavLinkClasses : ''}`}
-                            >
-                                {link.name}
-                            </NavLink>
-                        ))}
-                         <Link to="/booking" onClick={() => setIsMenuOpen(false)} className="w-full text-center bg-secondary hover:bg-secondary-dark text-white font-bold py-3 px-6 rounded-lg transition-transform duration-300 ease-in-out transform hover:scale-105">
-                            Book Now
-                        </Link>
-                    </div>
+            {/* Mobile Menu Overlay */}
+            <div className={`
+                lg:hidden absolute top-full left-0 w-full bg-white shadow-xl transition-all duration-300 ease-in-out
+                ${isMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'}
+            `}>
+                <div className="flex flex-col items-center space-y-5 px-6 py-8">
+                    {navLinks.map(link => (
+                        <NavLink
+                            key={link.path}
+                            to={link.path}
+                            onClick={() => setIsMenuOpen(false)}
+                            className={({ isActive }) => `text-xl ${navLinkClasses} ${isActive ? activeNavLinkClasses : ''}`}
+                        >
+                            {link.name}
+                        </NavLink>
+                    ))}
+                 
                 </div>
-            )}
+            </div>
         </header>
     );
 };
