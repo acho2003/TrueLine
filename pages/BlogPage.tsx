@@ -1,11 +1,11 @@
 // src/pages/BlogPage.tsx
-import React, { useState, useEffect } from 'react';
-import { getBlogPosts, BlogPost } from '../services/api';
-import Spinner from '../components/Spinner';
-import { Link } from 'react-router-dom';
-import { BsArrowRight } from 'react-icons/bs'; // A nice arrow for the button
+import React, { useState, useEffect } from "react";
+import { getBlogPosts, BlogPost } from "../services/api";
+import Spinner from "../components/Spinner";
+import { Link } from "react-router-dom";
+import { BsArrowRight } from "react-icons/bs"; // A nice arrow for the button
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = "http://localhost:5000";
 
 const BlogPage: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -18,7 +18,7 @@ const BlogPage: React.FC = () => {
         const data = await getBlogPosts();
         setPosts(data);
       } catch (err: any) {
-        setError(err.message || 'Failed to load posts.');
+        setError(err.message || "Failed to load posts.");
       } finally {
         setLoading(false);
       }
@@ -27,7 +27,12 @@ const BlogPage: React.FC = () => {
   }, []);
 
   if (loading)
-    return <div className="flex justify-center items-center h-screen"><Spinner /></div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
+
   if (error)
     return (
       <div className="text-center text-red-500 bg-red-100 p-4 rounded-md my-8 container mx-auto">
@@ -36,24 +41,27 @@ const BlogPage: React.FC = () => {
     );
 
   return (
-    <div className="font-open-sans">
-      {/* --- NEW: Banner Section --- */}
+    <div className="font-open-sans -mt-10">
+      {/* --- Banner Section --- */}
       <section className="bg-gray-50 py-20 text-center">
         <div className="container mx-auto px-4" data-aos="fade-up">
           <h1 className="text-4xl md:text-5xl font-bold text-primary font-montserrat">
-        Our Blog
+            Our Blog
           </h1>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore stories, insights, and tips from our team — crafted to inspire and inform your outdoor projects.
+            Explore stories, insights, and tips from our team — crafted to
+            inspire and inform your outdoor projects.
           </p>
         </div>
       </section>
-      
-      {/* Main Content Section */}
+
+      {/* --- Main Blog Grid --- */}
       <div className="bg-white py-20 lg:py-28">
         <div className="container mx-auto px-4">
           {posts.length === 0 ? (
-            <p className="text-center text-gray-500 text-xl py-10">No blog posts yet. Stay tuned!</p>
+            <p className="text-center text-gray-500 text-xl py-10">
+              No blog posts yet. Stay tuned!
+            </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {posts.map((post, index) => (
@@ -63,38 +71,40 @@ const BlogPage: React.FC = () => {
                   data-aos="fade-up"
                   data-aos-delay={index * 100}
                 >
-                  {/* Image */}
+                  {/* --- Image --- */}
                   <div className="relative overflow-hidden h-64">
                     <Link to={`/blog/${post._id}`}>
                       <img
-                        src={`${API_BASE_URL}/backend/${post.imageUrl.replace(/\\/g, '/')}`}
+                        // ✅ FIX: fetch image from backend correctly
+                        src={`backend/${post.imageUrl.replace(/\\/g, "/")}`}
                         alt={post.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     </Link>
                   </div>
 
-                  {/* Content */}
+                  {/* --- Content --- */}
                   <div className="p-6 flex flex-col flex-grow">
                     <p className="text-sm text-gray-500 mb-2">
-                      {new Date(post.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
+                      {new Date(post.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </p>
-                    
+
                     <h2 className="text-2xl font-bold text-primary mb-3 leading-snug transition-colors duration-300 font-montserrat group-hover:text-secondary">
                       <Link to={`/blog/${post._id}`}>{post.title}</Link>
                     </h2>
-                    
-                    {/* Use a div with dangerouslySetInnerHTML to render the snippet of HTML content */}
-                    <div 
+
+                    <div
                       className="text-gray-600 text-base leading-relaxed flex-grow line-clamp-4"
-                      dangerouslySetInnerHTML={{ __html: post.content.substring(0, 150) + '...' }}
+                      dangerouslySetInnerHTML={{
+                        __html: post.content.substring(0, 150) + "...",
+                      }}
                     />
-                    
-                    {/* --- MODIFIED: Interactive "Read More" Button --- */}
+
+                    {/* --- Read More Button --- */}
                     <div className="mt-6">
                       <Link
                         to={`/blog/${post._id}`}

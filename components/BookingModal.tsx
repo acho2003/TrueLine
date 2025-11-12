@@ -76,7 +76,7 @@ Notes: ${booking.notes || 'N/A'}
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <p><strong>Customer:</strong> {booking.name}</p>
                   <p><strong>Phone:</strong> {booking.phone}</p>
-                  <p className="md:col-span-2"><strong>Address:</strong> {booking.address}</p>
+                  <p className="md:col-span-2"><strong>Surub:</strong> {booking.address}</p>
                   <p><strong>Service:</strong> {booking.serviceType}</p>
                   <p><strong>Requested:</strong> {new Date(booking.preferredDateTime).toLocaleString()}</p>
                   <div className="md:col-span-2">

@@ -20,7 +20,7 @@ const ServiceRow: React.FC<{
   const imageSrc = `backend/${service.imageUrl}`;
 
   const imageBlock = (
-    <div className="relative w-full h-full flex items-center justify-center">
+    <div className="relative w-full h-full flex items-center justify-center order-1 md:order-none">
       {/* Large Faint Background Number */}
       <div
         className={`hidden md:flex absolute text-[120px] lg:text-[150px] font-extrabold text-gray-200/40 font-montserrat pointer-events-none select-none
@@ -40,14 +40,14 @@ const ServiceRow: React.FC<{
         alt={service.name}
         className="w-full h-full object-cover min-h-[350px] rounded-lg shadow-md relative z-10"
         onError={(e) => {
-          (e.target as HTMLImageElement).src =imageSrc;
+          (e.target as HTMLImageElement).src = imageSrc;
         }}
       />
     </div>
   );
 
   const textBlock = (
-    <div className="relative mt-5 md:mt-0 h-full flex flex-col justify-center z-20">
+    <div className="relative mt-5 md:mt-0 h-full flex flex-col justify-center z-20 order-2 md:order-none">
       <h4 className="text-base font-semibold text-secondary uppercase font-montserrat tracking-wider">
         OUTDOOR SERVICE
       </h4>
@@ -62,13 +62,17 @@ const ServiceRow: React.FC<{
       <p className="text-base text-gray-600 font-open-sans leading-relaxed my-8 relative pt-8 border-t border-gray-200">
         {service.description.slice(0, 150)}...
       </p>
+
+      {/* ✅ Learn More Link + Arrow */}
       <Link
         to={`/services/${service._id}`}
         aria-label={`Read more about ${service.name}`}
+        className="inline-flex items-center gap-2 text-primary font-semibold hover:text-secondary transition-colors group"
       >
+        <span className="text-lg group-hover:underline">Learn More</span>
         <HiArrowLongRight
-          size={35}
-          className="text-primary hover:text-secondary transition-colors"
+          size={28}
+          className="text-primary group-hover:text-secondary transition-transform duration-300 group-hover:translate-x-1"
         />
       </Link>
     </div>
@@ -76,10 +80,11 @@ const ServiceRow: React.FC<{
 
   return (
     <div
-      className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center"
+      className={`grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-start`}
       data-aos="zoom-in-up"
       data-aos-duration="1000"
     >
+      {/* On desktop, alternate image/text position */}
       {imagePosition === "left" ? (
         <>
           {imageBlock}

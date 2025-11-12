@@ -7,8 +7,8 @@ import FsLightbox from "fslightbox-react"; // Import the lightbox
 
 // --- Import your images ---
 import aboutBanner from "../assets/banner.jpg";
-import aboutMainImage from "../assets/banner3.jpg";
-import videoBgImage from "../assets/banner2.jpg"; // Add your new background image
+import aboutMainImage from "../assets/about2.jpg";
+import videoBgImage from "../assets/vid.jpg"; // Add your new background image
 
 // Reusable component for the "Our Values" section
 const ValueCard: React.FC<{
@@ -169,7 +169,7 @@ const AboutPage: React.FC = () => {
       <FsLightbox
         toggler={toggler}
         sources={[
-          "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // <-- REPLACE with your actual YouTube video link
+          "https://www.youtube.com/watch?v=XvRdRGWnJLs", // <-- REPLACE with your actual YouTube video link
         ]}
       />
     </div>

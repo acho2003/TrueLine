@@ -124,18 +124,18 @@ const Footer: React.FC = () => {
               <li className="flex items-start gap-3">
                 <IoLocationSharp className="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
                 <span>
-                  123 Evergreen Ln,
+                  50 Francisco street,
                   <br />
-                  Seattle, WA 98101
+                  Rivervale WA- 6103
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <PhoneIcon className="w-5 h-5 text-secondary" />
-                <span>(555) 123-4567</span>
+                <span>(+61) 415 331 913</span>
               </li>
               <li className="flex items-center gap-3">
                 <MailIcon className="w-5 h-5 text-secondary" />
-                <span>contact@trueline.com</span>
+                <span>wangchukmax@gmail.com</span>
               </li>
             </ul>
           </div>

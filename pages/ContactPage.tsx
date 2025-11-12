@@ -39,13 +39,13 @@ const ContactPage: React.FC = () => {
               Reach out to us via phone, email, or visit our location. For a quick chat, scan the QR code to connect with us on WhatsApp.
             </p>
             <ContactInfoItem icon={<IoIosCall size={30} />} title="Call Us Now">
-              <a href="tel:555-123-4567" className="hover:text-secondary">(555) 123-4567</a>
+              <a href="tel:555-123-4567" className="hover:text-secondary">(+61) 415 331 913</a>
             </ContactInfoItem>
             <ContactInfoItem icon={<MdEmail size={30} />} title="Send An Email">
-              <a href="mailto:contact@trueline.com" className="hover:text-secondary">contact@trueline.com</a>
+              <a href="mailto:contact@trueline.com" className="hover:text-secondary">wangchukmax@gmail.com</a>
             </ContactInfoItem>
             <ContactInfoItem icon={<MdOutlineShareLocation size={30} />} title="Our Location">
-              <p>123 Evergreen Ln, Seattle, WA</p>
+              <p>50 Francisco street, Rivervale WA- 6103</p>
             </ContactInfoItem>
           </div>
 
@@ -90,7 +90,7 @@ const ContactPage: React.FC = () => {
       <section data-aos="fade-up" data-aos-duration="1000">
         <iframe
           // IMPORTANT: Replace with your Google Maps embed code
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d172134.3644917642!2d-122.48214844335936!3d47.6129432!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5490102c93e83355%3A0x102565466944d59a!2sSeattle%2C%20WA%2C%20USA!5e0!3m2!1sen!2s!4v1678886444000!5m2!1sen!2s"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3385.111811634685!2d115.9015978!3d-31.9575916!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2a32bb5e8e3c5d6f%3A0x7d2f9d518d661445!2s50%20Francisco%20St%2C%20Rivervale%20WA%206103%2C%20Australia!5e0!3m2!1sen!2sus!4v1672886400000!5m2!1sen!2sus"
           height={450}
           allowFullScreen={true}
           loading="lazy"
