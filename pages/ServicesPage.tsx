@@ -17,7 +17,7 @@ const ServiceRow: React.FC<{
   index: number;
   imagePosition: "left" | "right";
 }> = ({ service, index, imagePosition }) => {
-  const imageSrc = `${API_BASE_URL}/uploads/${service.imageUrl}`;
+  const imageSrc = `backend/${service.imageUrl}`;
 
   const imageBlock = (
     <div className="relative w-full h-full flex items-center justify-center">
@@ -40,7 +40,7 @@ const ServiceRow: React.FC<{
         alt={service.name}
         className="w-full h-full object-cover min-h-[350px] rounded-lg shadow-md relative z-10"
         onError={(e) => {
-          (e.target as HTMLImageElement).src = "/fallback-image.jpg";
+          (e.target as HTMLImageElement).src =imageSrc;
         }}
       />
     </div>
