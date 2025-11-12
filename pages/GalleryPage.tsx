@@ -75,7 +75,7 @@ interface TimelineEntryProps {
 
 const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) => {
   const isLeft = align === 'left';
-  const imageUrl = `${API_BASE_URL}/backend/${work.afterPhotos[0].replace(/\\/g, '/')}`;
+  const imageUrl = `backend/${work.afterPhotos[0].replace(/\\/g, '/')}`;
 
   const content = (
     <div
@@ -198,12 +198,12 @@ const GalleryPage: React.FC = () => {
             <ImageCompareSlider
             beforeImage={
   selectedWork.beforePhotos.length
-    ? `${API_BASE_URL}/uploads/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
+    ? `backend/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
     : '/fallback-before.jpg'
 }
 afterImage={
   selectedWork.afterPhotos.length
-    ? `${API_BASE_URL}/uploads/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
+    ? `backend/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
     : '/fallback-after.jpg'
 }
 />
