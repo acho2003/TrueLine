@@ -7,7 +7,7 @@ import { Service } from "../types";
 import Spinner from "../components/Spinner";
 import { HiArrowLongRight } from "react-icons/hi2";
 
-const API_BASE_URL = "http://localhost:5000";
+
 
 // --------------------------------------
 // ServiceRow Component

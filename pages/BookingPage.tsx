@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createBooking, getServices } from '../services/api';
 import { Service } from '../types';
-import Spinner from '../components/Spinner'; // Assuming you have a Spinner component
+import Spinner from '../components/Spinner';
 
-const ADMIN_WHATSAPP_NUMBER = '97517781187'; // Your admin WhatsApp number
+const ADMIN_WHATSAPP_NUMBER = '97517781187'; // Admin WhatsApp number (Bhutan)
+const ADMIN_PHONE_NUMBER = '+97517781187'; // For SMS link
 
 const BookingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,11 +15,11 @@ const BookingPage: React.FC = () => {
   const [address, setAddress] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
-  
   const [allServices, setAllServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
 
   const [validationErrors, setValidationErrors] = useState({
     name: false,
@@ -27,87 +28,59 @@ const BookingPage: React.FC = () => {
     services: false,
   });
 
+  // ✅ Detect device
+  useEffect(() => {
+    const checkDevice = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+    setIsMobile(checkDevice);
+  }, []);
+
+  // ✅ Load available services
   useEffect(() => {
     const fetchServicesForChecklist = async () => {
       try {
         const data = await getServices();
         setAllServices(data);
       } catch (err) {
-        console.error("Could not load services for checklist", err);
-        setError("Could not load services. Please refresh the page.");
+        console.error('Could not load services for checklist', err);
+        setError('Could not load services. Please refresh the page.');
       }
     };
     fetchServicesForChecklist();
   }, []);
-  
+
   const handleServiceChange = (serviceName: string) => {
     if (validationErrors.services) {
-        setValidationErrors(prev => ({ ...prev, services: false }));
+      setValidationErrors((prev) => ({ ...prev, services: false }));
     }
-    setSelectedServices(prev =>
+    setSelectedServices((prev) =>
       prev.includes(serviceName)
-        ? prev.filter(s => s !== serviceName)
+        ? prev.filter((s) => s !== serviceName)
         : [...prev, serviceName]
     );
   };
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
-  setSuccess('');
 
-  if (!formData.name || !formData.phone || !formData.address || !formData.serviceType || !formData.preferredDateTime) {
-    setError('Please fill in all required fields.');
-    return;
-  }
+  // ✅ Form submission logic
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
-<<<<<<< HEAD
-  setLoading(true);
-=======
     const newErrors = {
-        name: !name.trim(),
-        phone: !phone.trim(),
-        address: !address.trim(),
-        services: selectedServices.length === 0,
+      name: !name.trim(),
+      phone: !phone.trim(),
+      address: !address.trim(),
+      services: selectedServices.length === 0,
     };
 
     setValidationErrors(newErrors);
 
-    if (Object.values(newErrors).some(isError => isError)) {
+    if (Object.values(newErrors).some((isError) => isError)) {
       setError('Please fill in all required fields highlighted in red.');
       return;
     }
->>>>>>> 3d666db99aa6a71980c7a4e3bdeaf5e8a5a6cce0
 
-  try {
-    // 1️⃣ Save booking in backend
-    await createBooking(formData);
-    setSuccess('Your booking request has been sent! We will contact you shortly.');
+    setLoading(true);
 
-<<<<<<< HEAD
-    // 2️⃣ Construct message
-    const message = `
-New Booking!
-Name: ${formData.name}
-Phone: ${formData.phone}
-Address: ${formData.address}
-Service: ${formData.serviceType}
-Preferred Date & Time: ${new Date(formData.preferredDateTime).toLocaleString()}
-Notes: ${formData.notes || 'N/A'}
-    `;
-
-    // 3️⃣ Detect mobile device
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (isMobile) {
-      // Open SMS app on mobile
-      const smsNumber = '+97517781187'; // replace with your number
-      const smsBody = encodeURIComponent(message);
-      window.location.href = `sms:${smsNumber}?body=${smsBody}`;
-    } else {
-      // Open WhatsApp Web / App on desktop
-      const whatsappURL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappURL, '_blank');
-=======
     const submissionData = {
       name,
       phone,
@@ -120,53 +93,51 @@ Notes: ${formData.notes || 'N/A'}
     try {
       await createBooking(submissionData);
       setSuccess('Your quote request has been sent! We will contact you shortly.');
+
       const message = `
 New Quote Request!
 Name: ${submissionData.name}
 Phone: ${submissionData.phone}
-Surub: ${submissionData.address}
+Address: ${submissionData.address}
 Services: ${submissionData.serviceType}
 Notes: ${submissionData.notes || 'N/A'}
       `;
-      const whatsappURL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappURL, '_blank');
 
+      const whatsappURL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+      const smsURL = `sms:${ADMIN_PHONE_NUMBER}?body=${encodeURIComponent(message)}`;
+
+      if (isMobile) {
+        // 📱 Show buttons (user will choose manually)
+        setSuccess('Your quote request has been sent! You can now contact us below.');
+      } else {
+        // 💻 Auto open WhatsApp on desktop
+        window.open(whatsappURL, '_blank');
+      }
+
+      // Reset form
       setName('');
       setPhone('');
       setAddress('');
       setSelectedServices([]);
       setNotes('');
       setValidationErrors({ name: false, phone: false, address: false, services: false });
-      setTimeout(() => navigate('/'), 3000);
 
+      // Redirect after delay
+      setTimeout(() => navigate('/'), 3000);
     } catch (err) {
       console.error(err);
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
->>>>>>> 3d666db99aa6a71980c7a4e3bdeaf5e8a5a6cce0
     }
+  };
 
-    // 4️⃣ Reset form
-    setFormData({ name: '', phone: '', address: '', serviceType: '', preferredDateTime: '', notes: '' });
-    setTimeout(() => navigate('/'), 3000);
-
-  } catch (err) {
-    console.error(err);
-    setError('An error occurred. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  // --- HELPER FOR DYNAMIC STYLING ---
   const getInputClasses = (hasError: boolean) => {
-    const baseClasses = "mt-1 block w-full px-3 py-2 border rounded-none shadow-sm focus:outline-none focus:ring-1 focus:ring-opacity-50";
-    if (hasError) {
-      return `${baseClasses} border-2 border-red-500 focus:border-red-500 focus:ring-red-500`;
-    }
-    return `${baseClasses} border-gray-300 focus:border-primary focus:ring-primary`;
+    const baseClasses =
+      'mt-1 block w-full px-3 py-2 border rounded-none shadow-sm focus:outline-none focus:ring-1 focus:ring-opacity-50';
+    return hasError
+      ? `${baseClasses} border-2 border-red-500 focus:border-red-500 focus:ring-red-500`
+      : `${baseClasses} border-gray-300 focus:border-primary focus:ring-primary`;
   };
 
   return (
@@ -175,62 +146,92 @@ Notes: ${submissionData.notes || 'N/A'}
         <div className="max-w-3xl mx-auto bg-white p-8 sm:p-12 shadow-2xl rounded-none">
           <div className="text-center mb-10">
             <h1 className="text-4xl font-bold text-black font-montserrat">Get a Quote</h1>
-            <p className="text-gray-600 mt-2">Let us know what you're looking for, and we'll provide a free, no-obligation quote.</p>
+            <p className="text-gray-600 mt-2">
+              Let us know what you're looking for, and we'll provide a free, no-obligation quote.
+            </p>
           </div>
 
-          {error && <div className="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-none relative mb-6">{error}</div>}
-          {success && <div className="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-none relative mb-6">{success}</div>}
+          {error && (
+            <div className="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-none mb-6">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="bg-green-50 border border-green-300 text-green-800 px-4 py-3 rounded-none mb-6 text-center">
+              {success}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name & Phone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input type="text" name="name" id="name" value={name} 
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
                   onChange={(e) => {
                     setName(e.target.value);
-                    if (validationErrors.name) setValidationErrors(prev => ({ ...prev, name: false }));
-                  }} required 
+                    if (validationErrors.name)
+                      setValidationErrors((prev) => ({ ...prev, name: false }));
+                  }}
+                  required
                   className={getInputClasses(validationErrors.name)}
                 />
               </div>
+
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                <input type="tel" name="phone" id="phone" value={phone} 
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  value={phone}
                   onChange={(e) => {
                     setPhone(e.target.value);
-                    if (validationErrors.phone) setValidationErrors(prev => ({ ...prev, phone: false }));
-                  }} required 
+                    if (validationErrors.phone)
+                      setValidationErrors((prev) => ({ ...prev, phone: false }));
+                  }}
+                  required
                   className={getInputClasses(validationErrors.phone)}
                 />
               </div>
             </div>
-            
+
+            {/* Address */}
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Surub</label>
-              <input type="text" name="address" id="address" value={address} 
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                Address (Surub)
+              </label>
+              <input
+                type="text"
+                id="address"
+                value={address}
                 onChange={(e) => {
                   setAddress(e.target.value);
-                  if (validationErrors.address) setValidationErrors(prev => ({ ...prev, address: false }));
-                }} required 
+                  if (validationErrors.address)
+                    setValidationErrors((prev) => ({ ...prev, address: false }));
+                }}
+                required
                 className={getInputClasses(validationErrors.address)}
               />
             </div>
-            
+
+            {/* Services */}
             <div>
-<<<<<<< HEAD
-              <label htmlFor="address" className="block text-sm font-medium text-dark-text">Address</label>
-              <input type="text" name="address" id="address" value={formData.address} onChange={handleChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"/>
-            </div>
-            <div>
-              <label htmlFor="serviceType" className="block text-sm font-medium text-dark-text">Service Type</label>
-              <select name="serviceType" id="serviceType" value={formData.serviceType} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
-                <option value="">Select a service</option>
-                {services.map(service => (
-                  <option key={service._id} value={service.name}>{service.name}</option>
-=======
-              <label className="block text-sm font-medium text-gray-700 mb-2">Services of Interest</label>
-              <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border bg-gray-50 rounded-none ${validationErrors.services ? 'border-2 border-red-500' : 'border-gray-200'}`}>
-                {allServices.map(service => (
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Services of Interest
+              </label>
+              <div
+                className={`grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border bg-gray-50 rounded-none ${
+                  validationErrors.services ? 'border-2 border-red-500' : 'border-gray-200'
+                }`}
+              >
+                {allServices.map((service) => (
                   <label key={service._id} className="flex items-center space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
@@ -240,16 +241,25 @@ Notes: ${submissionData.notes || 'N/A'}
                     />
                     <span className="text-gray-800 font-medium">{service.name}</span>
                   </label>
->>>>>>> 3d666db99aa6a71980c7a4e3bdeaf5e8a5a6cce0
                 ))}
               </div>
             </div>
-            
+
+            {/* Notes */}
             <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">Additional Notes (optional)</label>
-              <textarea name="notes" id="notes" rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-none shadow-sm focus:outline-none focus:ring-1 focus:ring-opacity-50 focus:border-primary focus:ring-primary"></textarea>
+              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+                Additional Notes (optional)
+              </label>
+              <textarea
+                id="notes"
+                rows={4}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-none shadow-sm focus:outline-none focus:ring-1 focus:ring-opacity-50 focus:border-primary focus:ring-primary"
+              ></textarea>
             </div>
-            
+
+            {/* Submit */}
             <div className="text-center pt-4">
               <button
                 type="submit"
@@ -263,6 +273,26 @@ Notes: ${submissionData.notes || 'N/A'}
               </button>
             </div>
           </form>
+
+          {/* 📱 Show WhatsApp + SMS buttons only on mobile */}
+          {isMobile && (
+            <div className="flex justify-center items-center gap-4 mt-8">
+              <a
+                href={`sms:${ADMIN_PHONE_NUMBER}?body=Hello%2C%20I%27d%20like%20to%20book%20a%20service!`}
+                className="px-5 py-3 rounded-md bg-blue-600 text-white font-semibold text-lg shadow-md hover:bg-blue-700 transition-all duration-300"
+              >
+                📩 SMS
+              </a>
+              <a
+                href={`https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=Hello%2C%20I%27d%20like%20to%20book%20a%20service!`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-3 rounded-md bg-green-600 text-white font-semibold text-lg shadow-md hover:bg-green-700 transition-all duration-300"
+              >
+                💬 WhatsApp
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>
