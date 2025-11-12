@@ -36,26 +36,25 @@ const BookingPage: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+  setSuccess('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+  if (!formData.name || !formData.phone || !formData.address || !formData.serviceType || !formData.preferredDateTime) {
+    setError('Please fill in all required fields.');
+    return;
+  }
 
-    if (!formData.name || !formData.phone || !formData.address || !formData.serviceType || !formData.preferredDateTime) {
-      setError('Please fill in all required fields.');
-      return;
-    }
+  setLoading(true);
 
-    setLoading(true);
+  try {
+    // 1️⃣ Save booking in backend
+    await createBooking(formData);
+    setSuccess('Your booking request has been sent! We will contact you shortly.');
 
-    try {
-      // 1️⃣ Save booking in backend
-      await createBooking(formData);
-      setSuccess('Your booking request has been sent! We will contact you shortly.');
-
-      // 2️⃣ Construct WhatsApp message
-      const message = `
+    // 2️⃣ Construct message
+    const message = `
 New Booking!
 Name: ${formData.name}
 Phone: ${formData.phone}
@@ -63,24 +62,34 @@ Address: ${formData.address}
 Service: ${formData.serviceType}
 Preferred Date & Time: ${new Date(formData.preferredDateTime).toLocaleString()}
 Notes: ${formData.notes || 'N/A'}
-      `;
+    `;
 
+    // 3️⃣ Detect mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Open SMS app on mobile
+      const smsNumber = '+97517781187'; // replace with your number
+      const smsBody = encodeURIComponent(message);
+      window.location.href = `sms:${smsNumber}?body=${smsBody}`;
+    } else {
+      // Open WhatsApp Web / App on desktop
       const whatsappURL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-      // 3️⃣ Open WhatsApp Web / App
       window.open(whatsappURL, '_blank');
-
-      // 4️⃣ Reset form
-      setFormData({ name: '', phone: '', address: '', serviceType: '', preferredDateTime: '', notes: '' });
-      setTimeout(() => navigate('/'), 3000);
-
-    } catch (err) {
-      console.error(err);
-      setError('An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
     }
-  };
+
+    // 4️⃣ Reset form
+    setFormData({ name: '', phone: '', address: '', serviceType: '', preferredDateTime: '', notes: '' });
+    setTimeout(() => navigate('/'), 3000);
+
+  } catch (err) {
+    console.error(err);
+    setError('An error occurred. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="py-20 bg-light-bg">
@@ -109,7 +118,7 @@ Notes: ${formData.notes || 'N/A'}
             </div>
             <div>
               <label htmlFor="serviceType" className="block text-sm font-medium text-dark-text">Service Type</label>
-              <select name="serviceType" id="serviceType" value={formData.serviceType} onChange={handleChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+              <select name="serviceType" id="serviceType" value={formData.serviceType} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
                 <option value="">Select a service</option>
                 {services.map(service => (
                   <option key={service._id} value={service.name}>{service.name}</option>
