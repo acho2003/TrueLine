@@ -102,14 +102,14 @@ const HomePage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Phone className="w-6 h-6 text-[#6FAF4B]" strokeWidth={2.5} />
                 <span className="text-lg text-white font-semibold">
-                  0412 345 678
+                  +61 415 331 913
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Mail className="w-6 h-6 text-[#6FAF4B]" strokeWidth={2.5} />
                 <span className="text-lg text-white font-semibold">
-                  contact@trueline.com
+                  wangchukmax@gmail.com
                 </span>
               </div>
             </div>

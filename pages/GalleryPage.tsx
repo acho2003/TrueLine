@@ -1,6 +1,7 @@
 // src/pages/GalleryPage.tsx
 
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom'; // 1. IMPORT ReactDOM - THIS IS CRITICAL TO PREVENT CRASHES
 import { getManagedGalleryItems } from '../services/api';
 import Spinner from '../components/Spinner';
 import { X, ChevronsLeftRight } from 'lucide-react';
@@ -13,8 +14,6 @@ interface GalleryWork {
   afterPhotos: string[];
 }
 
-const API_BASE_URL = 'http://localhost:5000';
-
 // ============================================================================
 // Image Comparison Slider Component (Unchanged)
 // ============================================================================
@@ -24,7 +23,6 @@ interface ImageSliderProps {
 }
 
 const ImageCompareSlider: React.FC<ImageSliderProps> = ({ beforeImage, afterImage }) => {
-  // ... (No changes needed in this component)
   const [sliderPos, setSliderPos] = useState(50);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
@@ -65,7 +63,7 @@ const ImageCompareSlider: React.FC<ImageSliderProps> = ({ beforeImage, afterImag
 };
 
 // ============================================================================
-// Timeline Entry Component
+// Timeline Entry Component (Unchanged)
 // ============================================================================
 interface TimelineEntryProps {
   work: GalleryWork;
@@ -79,7 +77,7 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) =
 
   const content = (
     <div
-      className="cursor-pointer group relative overflow-hidden rounded-none shadow-lg" // MODIFIED: Made the container relative
+      className="cursor-pointer group relative overflow-hidden rounded-none shadow-lg"
       onClick={onClick}
       data-aos={isLeft ? 'fade-right' : 'fade-left'}
       data-aos-duration="1000"
@@ -89,7 +87,6 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) =
         alt={work.serviceType}
         className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
       />
-      {/* --- MODIFIED: Content is now an overlay --- */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-6 flex flex-col justify-end">
         <div>
           <h3 className="text-xl font-bold text-white font-montserrat">{work.serviceType}</h3>
@@ -109,6 +106,7 @@ const TimelineEntry: React.FC<TimelineEntryProps> = ({ work, onClick, align }) =
   );
 };
 
+
 // ============================================================================
 // Main Gallery Page Component
 // ============================================================================
@@ -118,12 +116,17 @@ const GalleryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedWork, setSelectedWork] = useState<GalleryWork | null>(null);
 
-  // --- MODIFIED: useEffect to handle mobile scroll ---
+  // 2. USE A MORE ROBUST BODY SCROLL LOCK EFFECT
   useEffect(() => {
-    // When the modal opens, scroll the window to the top
     if (selectedWork) {
-      window.scrollTo(0, 0);
+      document.body.style.overflow = 'hidden'; // Prevent background scroll
+    } else {
+      document.body.style.overflow = 'auto'; // Restore background scroll
     }
+    // Cleanup function
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   }, [selectedWork]);
 
   useEffect(() => {
@@ -141,10 +144,10 @@ const GalleryPage: React.FC = () => {
     fetchWorks();
   }, []);
   
-  // ... (loading and error states remain the same) ...
+  // No changes to loading/error states...
 
   return (
-    <div className="bg-white font-open-sans text-gray-800 overflow-x-hidden">
+    <div className="bg-white font-open-sans text-gray-800 overflow-x-hidden -mt-10">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-black tracking-tight font-montserrat">
@@ -174,14 +177,14 @@ const GalleryPage: React.FC = () => {
         )}
       </div>
 
-      {selectedWork && (
+      {/* 3. USE A PORTAL TO RENDER THE MODAL OUTSIDE THE STACKING CONTEXT */}
+      {selectedWork && ReactDOM.createPortal(
         <div
-          // --- MODIFIED: On mobile, align to top to ensure visibility ---
-          className="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/80 animate-fadeIn overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fadeIn p-4"
           onClick={() => setSelectedWork(null)}
         >
           <div
-            className="relative w-full max-w-5xl p-4 my-8" // Added vertical margin for spacing
+            className="relative w-full max-w-5xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -196,24 +199,23 @@ const GalleryPage: React.FC = () => {
               <p className="text-gray-300 font-open-sans">{selectedWork.description}</p>
             </div>
             <ImageCompareSlider
-            beforeImage={
-  selectedWork.beforePhotos.length
-    ? `backend/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
-    : '/fallback-before.jpg'
-}
-afterImage={
-  selectedWork.afterPhotos.length
-    ? `backend/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
-    : '/fallback-after.jpg'
-}
-/>
-
+              beforeImage={
+                selectedWork.beforePhotos.length
+                  ? `backend/${selectedWork.beforePhotos[0].replace(/\\/g, '/')}`
+                  : '/fallback-before.jpg'
+              }
+              afterImage={
+                selectedWork.afterPhotos.length
+                  ? `backend/${selectedWork.afterPhotos[0].replace(/\\/g, '/')}`
+                  : '/fallback-after.jpg'
+              }
+            />
           </div>
-        </div>
+        </div>,
+        document.getElementById('modal-root')! // The '!' tells TypeScript we are sure this element exists
       )}
     </div>
   );
 };
 
 export default GalleryPage;
- 
