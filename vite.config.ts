@@ -15,11 +15,6 @@ export default defineConfig(({ mode }) => {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'), // ✅ point to src folder
-      },
-    },
     build: {
       outDir: 'dist', // ✅ required by Vercel
       emptyOutDir: true,
