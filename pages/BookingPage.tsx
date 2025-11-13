@@ -21,6 +21,8 @@ const BookingPage: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [isMobile, setIsMobile] = useState(false);
 
+  const [contactMethod, setContactMethod] = useState<'sms' | 'whatsapp'>('whatsapp');
+
   const [validationErrors, setValidationErrors] = useState({
     name: false,
     phone: false,
@@ -91,9 +93,11 @@ const BookingPage: React.FC = () => {
     };
 
     try {
+      // Send to backend
       await createBooking(submissionData);
       setSuccess('Your quote request has been sent! We will contact you shortly.');
 
+      // Prepare message content
       const message = `
 New Quote Request!
 Name: ${submissionData.name}
@@ -106,12 +110,11 @@ Notes: ${submissionData.notes || 'N/A'}
       const whatsappURL = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
       const smsURL = `sms:${ADMIN_PHONE_NUMBER}?body=${encodeURIComponent(message)}`;
 
-      if (isMobile) {
-        // 📱 Show buttons (user will choose manually)
-        setSuccess('Your quote request has been sent! You can now contact us below.');
-      } else {
-        // 💻 Auto open WhatsApp on desktop
+      // ✅ Open based on selected contact method
+      if (contactMethod === 'whatsapp') {
         window.open(whatsappURL, '_blank');
+      } else if (contactMethod === 'sms') {
+        window.open(smsURL, '_self');
       }
 
       // Reset form
@@ -259,6 +262,37 @@ Notes: ${submissionData.notes || 'N/A'}
               ></textarea>
             </div>
 
+            {/* ✅ Contact Method */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Preferred Contact Method
+              </label>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="contactMethod"
+                    value="whatsapp"
+                    checked={contactMethod === 'whatsapp'}
+                    onChange={() => setContactMethod('whatsapp')}
+                    className="text-green-600 focus:ring-green-500"
+                  />
+                  <span>WhatsApp</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="contactMethod"
+                    value="sms"
+                    checked={contactMethod === 'sms'}
+                    onChange={() => setContactMethod('sms')}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span>SMS</span>
+                </label>
+              </div>
+            </div>
+
             {/* Submit */}
             <div className="text-center pt-4">
               <button
@@ -273,26 +307,6 @@ Notes: ${submissionData.notes || 'N/A'}
               </button>
             </div>
           </form>
-
-          {/* 📱 Show WhatsApp + SMS buttons only on mobile */}
-          {isMobile && (
-            <div className="flex justify-center items-center gap-4 mt-8">
-              <a
-                href={`sms:${ADMIN_PHONE_NUMBER}?body=Hello%2C%20I%27d%20like%20to%20book%20a%20service!`}
-                className="px-5 py-3 rounded-md bg-blue-600 text-white font-semibold text-lg shadow-md hover:bg-blue-700 transition-all duration-300"
-              >
-                📩 SMS
-              </a>
-              <a
-                href={`https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=Hello%2C%20I%27d%20like%20to%20book%20a%20service!`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-3 rounded-md bg-green-600 text-white font-semibold text-lg shadow-md hover:bg-green-700 transition-all duration-300"
-              >
-                💬 WhatsApp
-              </a>
-            </div>
-          )}
         </div>
       </div>
     </div>
