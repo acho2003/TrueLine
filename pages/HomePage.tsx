@@ -8,7 +8,7 @@ import ServiceCard from "../components/ServiceCard";
 import Spinner from "../components/Spinner";
 import AboutSection from "../components/AboutSection";
 import FeaturedServicesSection from "../components/FeaturedServicesSection";
-import TestimonialsSection from "@/components/TestimonialsSection";
+import TestimonialsSection from "../components/TestimonialsSection";
 import GallerySliderSection from "../components/GallerySliderSection";
 import banner1 from "../assets/banners.jpeg";
 import { Phone, Mail } from "lucide-react";

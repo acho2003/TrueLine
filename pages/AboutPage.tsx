@@ -76,7 +76,7 @@ const AboutPage: React.FC = () => {
               beautiful, functional, and sustainable outdoor living areas.
             </p>
             <p className="text-gray-600 leading-relaxed">
-              We believe a well-maintained yard is an extension of your home—a
+              We believe a well-maintained yard is an extension of your home a
               place for relaxation, memories, and pride. Our mission is to bring
               your unique vision to life with reliability and unmatched
               craftsmanship.

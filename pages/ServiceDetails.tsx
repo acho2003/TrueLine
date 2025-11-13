@@ -5,7 +5,8 @@ import Spinner from "../components/Spinner";
 import { createBooking } from "../services/api";
 import { ArrowLeft, Printer } from "lucide-react";
 
-const API_BASE_URL = "https://trueline.onrender.com";
+const API_BASE_URL = "http://localhost:5000";
+
 const ADMIN_WHATSAPP_NUMBER = "97517781187";
 
 // Quote Form Component remains unchanged...
@@ -58,6 +59,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ serviceName }) => {
       setLoading(false);
     }
   };
+
 
   const getInputClasses = (hasError: boolean) => {
     const base =
@@ -249,8 +251,8 @@ const ServiceDetails: React.FC = () => {
                 <p className="text-gray-500 text-lg mb-6 leading-relaxed">
                   {service.description}
                 </p>
-              )}
-
+              )}  
+            
               <div
                 className="prose max-w-none text-gray-600 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: service.details }}
@@ -259,7 +261,7 @@ const ServiceDetails: React.FC = () => {
           </div>
         </div>
       </section>
-
+              
       <section id="quote-form-section" className="bg-gray-50 py-20 lg:py-28 print-hide">
         <div className="container mx-auto px-4 max-w-4xl">
           <QuoteForm serviceName={service.name} />

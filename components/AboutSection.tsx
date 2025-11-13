@@ -25,7 +25,7 @@ const AboutSection = () => {
             </h2>
             <p className="text-base text-gray-600 font-open-sans leading-relaxed">
               At TrueLine, we believe an outdoor space is more than just
-              land—it's an extension of your home. It's where memories are made.
+              land it's an extension of your home. It's where memories are made.
               Our team is dedicated to transforming your vision into a reality
               with precision, professionalism, and a deep respect for your
               property.

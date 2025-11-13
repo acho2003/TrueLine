@@ -90,7 +90,7 @@ exports.deleteBooking = async (req, res) => {
       return res.status(404).json({ msg: 'Booking not found' });
     }
 
-    await booking.remove();
+    await booking.deleteOne(); // <-- fix here
     res.json({ msg: 'Booking removed' });
   } catch (err) {
     console.error(err.message);
