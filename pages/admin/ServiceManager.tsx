@@ -3,19 +3,25 @@ import { Service } from '../../types'; // Ensure this import is correct
 import { getServices, createService, updateService, deleteService } from '../../services/api';
 import Spinner from '../../components/Spinner';
 
-// --- ServiceForm Component ---
 const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> | null, onSave: (data: FormData) => void, onCancel: () => void }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [price, setPrice] = useState('');
+    const [details, setDetails] = useState(''); // --- NEW STATE ---
     const [image, setImage] = useState<File | null>(null);
 
     useEffect(() => {
         if (service) {
             setName(service.name || '');
             setDescription(service.description || '');
-            setPrice(service.price || '');
+            // Convert array of details to a comma-separated string for the textarea
+            setDetails(service.details ? service.details.join(', ') : ''); // --- UPDATED EFFECT ---
             setImage(null);
+        } else {
+             // Reset form for new service
+             setName('');
+             setDescription('');
+             setDetails(''); // Reset new field
+             setImage(null);
         }
     }, [service]);
 
@@ -24,7 +30,7 @@ const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> 
         const formData = new FormData();
         formData.append('name', name);
         formData.append('description', description);
-        formData.append('price', price);
+        formData.append('details', details); // --- APPEND NEW FIELD ---
         if (image) {
             formData.append('image', image);
         }
@@ -33,19 +39,52 @@ const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> 
 
     return (
         <div className="p-6 mb-6 bg-gray-50 border border-gray-200 rounded-lg shadow-sm animate-fadeInUp">
-            {/* --- THE DEFINITIVE FIX --- */}
-            <h3 className="text-xl font-semibold mb-4 text-primary">
-                {service && service.hasOwnProperty('_id') ? 'Edit Service' : 'Add New Service'}
-            </h3>
+            {/* ... (omitted) */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required className="w-full p-2 border rounded" />
                 <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} required className="w-full p-2 border rounded" rows={3} />
-                <input type="text" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} required className="w-full p-2 border rounded" />
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Service Image</label>
-                    <input type="file" onChange={e => setImage(e.target.files ? e.target.files[0] : null)} className="w-full p-2 border rounded" accept="image/*" />
-                    {service?.imageUrl && !image && <img src={`http://localhost:5000/${service.imageUrl}`} alt={service.name || 'Service Image'} className="w-20 h-20 mt-2 object-cover rounded" />}
-                </div>
+                {/* <input type="text" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} required className="w-full p-2 border rounded" /> */}
+                {/* --- NEW FIELD FOR DETAILS LIST --- */}
+                <textarea 
+                    placeholder="Details (comma-separated list, e.g., Mowing, Edging, Blowing)" 
+                    value={details} 
+                    onChange={e => setDetails(e.target.value)} 
+                    className="w-full p-2 border rounded" 
+                    rows={2} 
+                />
+                {/* --------------------------------- */}
+               <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Service Image</label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={e => setImage(e.target.files ? e.target.files[0] : null)}
+    className="block w-full text-sm text-gray-700 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary"
+  />
+
+  {/* ✅ Preview selected image before upload */}
+  {image && (
+    <div className="mt-2">
+      <img
+        src={URL.createObjectURL(image)}
+        alt="Preview"
+        className="w-32 h-32 object-cover rounded border border-gray-200"
+      />
+    </div>
+  )}
+
+  {/* ✅ Show existing image if editing and no new one selected */}
+  {!image && service?.imageUrl && (
+    <div className="mt-2">
+      <img
+        src={`backend/${service.imageUrl}`}
+        alt={service.name}
+        className="w-32 h-32 object-cover rounded border border-gray-200"
+      />
+    </div>
+  )}
+</div>
+
                 <div className="flex gap-2">
                     <button type="submit" className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark">Save</button>
                     <button type="button" onClick={onCancel} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
@@ -54,7 +93,6 @@ const ServiceForm = ({ service, onSave, onCancel }: { service: Partial<Service> 
         </div>
     );
 };
-
 
 // --- ServiceManager Component ---
 const ServiceManager = () => {
@@ -125,7 +163,6 @@ const ServiceManager = () => {
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
@@ -140,7 +177,6 @@ const ServiceManager = () => {
   />
 </td>
                                 <td className="px-6 py-4 font-medium">{service.name}</td>
-                                <td className="px-6 py-4">{service.price}</td>
                                 <td className="px-6 py-4 space-x-2 whitespace-nowrap">
                                     <button onClick={() => setEditingService(service)} className="text-indigo-600 hover:text-indigo-900">Edit</button>
                                     <button onClick={() => handleDelete(service._id)} className="text-red-600 hover:text-red-900">Delete</button>

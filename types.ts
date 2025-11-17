@@ -15,12 +15,12 @@ export enum BookingStatus {
 // Service: Represents a service offered.
 // Uses '_id' from MongoDB. 'id' is optional for frontend convenience.
 export interface Service {
-  _id: string;
-  id?: string;
+  _id: string; 
   name: string;
   description: string;
-  price: string; // Using string for flexibility like "$50/hr" or "Custom Quote"
+  price: string;
   imageUrl: string;
+  details: string[]; // <--- ADD THIS
 }
 
 // Booking: Represents a customer's booking request.

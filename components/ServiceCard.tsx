@@ -25,9 +25,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
       <div className="absolute bottom-0 p-8 text-white z-10">
         <h3 className="text-3xl font-bold mb-3 drop-shadow-md">{service.name}</h3>
         <p className="text-base mb-4 line-clamp-3 opacity-90">{service.description}</p>
-        {service.price && (
-          <p className="font-semibold mb-5">${service.price} / hour</p>
-        )}
+       
         <Link
           to="/booking"
           state={{ selectedService: service.id }}

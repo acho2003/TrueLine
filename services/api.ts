@@ -2,8 +2,10 @@
 
 // --- FIX: IMPORT the types from your central types file ---
 import { Booking, BookingStatus, Service, User } from '../types';
+
 // --- Configuration ---
-const API_URL = 'http://localhost:5000/api';
+
+const API_URL = "http://localhost:5000/api";
 
 // --- Helper function for API requests (remains the same) ---
 async function request<T>(
